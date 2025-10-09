@@ -1,11 +1,11 @@
-function TBorbit = OEfromRV(mu, rbar, vbar)
+function TBorbit = OEfromRV(rbar, vbar)
 
 %this function calculates the classical two-body orbital parameters 
 %using R and V vectors at one instant as input
 global mu_sun; global mu_earth;
 mu_sun = 132712440000.00002;
 mu_earth = 3.986004e14;
-%mu = mum;
+mu = mu_sun;
 
 %rx = rbar(1); ry = rbar(2); rz = rbar(3);
 %vx = vbar(1); vy = vbar(2); vz = vbar(3);
