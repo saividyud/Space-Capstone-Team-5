@@ -85,7 +85,7 @@ with tqdm(total=len(t_burns)*len(nu_burns), desc="Processing t_burns") as pbar:
         time_minimum_rel_velocities.append(constant_t_burn_times)
         delta_v_at_minimum_rel_velocities.append(constant_t_burn_delta_vs)
 
-with open('lambert_scanner_results.csv', mode='w', newline='') as file:
+with open('./Trajectory/lambert_scanner_results_full.csv', mode='w', newline='') as file:
     writer = csv.writer(file)
     writer.writerow(['t_burn (days)', 'nu_burn (degrees)', 'Minimum Relative Velocity (km/s)', 'Time at Minimum Relative Velocity (days)', 'Delta-V at Minimum Relative Velocity (km/s)'])
     
