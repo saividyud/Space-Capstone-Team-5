@@ -30,7 +30,7 @@ sim_params = {
 nu_burns = np.linspace(0, 360, 100, endpoint=False) * u.deg
 
 # Defining vector of time of burns with respect to ISO perihelion
-t_burns = np.linspace(-(3*u.yr).to(u.day).value, -100, 2) * u.day
+t_burns = np.linspace(-(3*u.yr).to(u.day).value, -100, 100) * u.day
 
 minimum_rel_velocities = []
 time_minimum_rel_velocities = []
