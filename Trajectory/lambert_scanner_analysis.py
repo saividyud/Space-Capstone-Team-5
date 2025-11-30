@@ -27,7 +27,7 @@ sim_params = {
     'dv_chemical_vector': np.array([-1, 0, 5.5]) * u.km / u.s # Defined in the spacecraft orbital frame
 }
 
-nu_burns = np.linspace(0, 360, 100) * u.deg
+nu_burns = np.linspace(0, 360, 100, endpoint=False) * u.deg
 
 # Defining vector of time of burns with respect to ISO perihelion
 t_burns = np.linspace(-(3*u.yr).to(u.day).value, -100, 100) * u.day
@@ -68,6 +68,8 @@ with tqdm(total=len(t_burns)*len(nu_burns), desc="Processing t_burns") as pbar:
                 constant_t_burn_rel_velocities.append(np.nan)
                 constant_t_burn_times.append(np.nan)
                 constant_t_burn_delta_vs.append(np.nan)
+
+                pbar.update(1)
                 continue
 
             min_rel_velocity_index = np.argmin(relative_velocity_mags[below_v_threshold_index])

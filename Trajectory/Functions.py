@@ -629,7 +629,7 @@ class InterceptorMission:
 
             # Solving Lambert's problem to get required velocity at burn
             try:
-                (v_initial_lambert, v_final_lambert) = lambert(c.GM_sun, r_initial, r_final, t_flight, rtol=1e-12)
+                (v_initial_lambert, v_final_lambert) = lambert(c.GM_sun, r_initial, r_final, t_flight)
             except:
                 continue
 
