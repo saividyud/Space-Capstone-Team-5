@@ -10,7 +10,7 @@ mu_E = 3.986e14; % [m^3/s^2] Geocentric
 R_E = 6378.1363e3; 
 au2m = 1.496e11; % [m] Astronomical Unit
 
-leo_alt = 2000e3;
+leo_alt = 400e3;
 
 % Radii
 r_LEO = R_E + leo_alt;
@@ -40,6 +40,10 @@ dv_insert = v_circ2 - v_t2;
 
 dv_total = abs(dv_escape) + abs(dv_insert);
 
+% Transfer time
+% Calculate transfer time using the Hohmann transfer equation
+transfer_time = pi * sqrt((a_trans^3) / mu_S);
+
 % Print results
 fprintf('LEO altitude: %.0f km\n', leo_alt/1e3);
 fprintf('Target radius: %.3f AU\n', target_r);
@@ -49,3 +53,5 @@ fprintf('\nv_inf: %.4f km/s\n', v_inf/1e3);
 fprintf('Δv_escape (LEO burn): %.4f km/s\n', abs(dv_escape)/1e3);
 fprintf('Δv_insert (heliocentric circularization): %.4f km/s\n', abs(dv_insert)/1e3);
 fprintf('Total Δv: %.4f km/s\n', dv_total/1e3);
+
+fprintf('Transfer time: %.4f days\n', transfer_time/86400);

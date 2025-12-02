@@ -481,6 +481,7 @@ class InterceptorMission:
             return sc_intercept, sc_intercept_pos, iso_pos, rel_dists, rel_vels, min_time_2, min_time_3, curr_iter
         
         def update(frame):
+            # fig.suptitle(f'Optimization Iteration: {frame}', fontsize=16, fontweight='bold')
             fig.suptitle(f'Interception Time since ISO Perihelion: {self.scanner_times_array[frame].to(u.day).value:.2f} days', fontsize=16, fontweight='bold')
 
             sc_intercept.set_data(self.sc_intercept_rs_history[frame][:, 0], self.sc_intercept_rs_history[frame][:, 1])
@@ -656,16 +657,36 @@ class InterceptorMission:
 
             self.iterations += 1
 
-        self.min_dv_index = np.argmin([np.linalg.norm(dv) for dv in self.dv_history])
+        self.dv_history_array = np.array(self.dv_history) * u.km / u.s
+
+        self.scanner_times_array = np.array(self.scanner_times) * u.s
+        
+        self.sc_intercept_ts_history_array = np.array([val.to(u.s).value for val in self.sc_intercept_ts_history]) * u.s
+        self.sc_intercept_rs_history_array = np.array(self.sc_intercept_rs_history) * u.au
+        self.sc_intercept_vs_history_array = np.array(self.sc_intercept_vs_history) * u.km / u.s
+
+        self.min_distance_index_history_array = np.array(self.min_distance_index_history)
+        self.time_of_min_distance_history_array = np.array([val.to(u.s).value for val in self.time_of_min_distance_history]) * u.s
+        self.min_distance_history_array = np.array([val.to(u.km).value for val in self.min_distance_history]) * u.km
+        self.rel_v_of_min_distance_history_array = np.array([val.to(u.km / u.s).value for val in self.rel_v_of_min_distance_history]) * u.km / u.s
+
+        delta_v_mags = np.linalg.norm(self.dv_history_array, axis=1).value
+        relative_velocity_mags = self.rel_v_of_min_distance_history_array.value
+        below_v_threshold_index = np.where(delta_v_mags <= 15)
+
+        min_rel_velocity_index = np.argmin(relative_velocity_mags[below_v_threshold_index])
+        min_rel_velocity = relative_velocity_mags[below_v_threshold_index][min_rel_velocity_index]
+        time_min_rel_velocity = self.scanner_times_array.to(u.day)[below_v_threshold_index][min_rel_velocity_index]
+        delta_v_min_rel_velocity = delta_v_mags[below_v_threshold_index][min_rel_velocity_index]
 
         if verbose:
             print("=== Lambert Scan Results ===")
-            print(f"Optimal Chemical Delta-V Vector Required at Burn: {self.dv_history[self.min_dv_index]} km/s")
-            print(f"Optimal Chemical Delta-V Magnitude Required at Burn: {np.linalg.norm(self.dv_history[self.min_dv_index]):.3f} km/s")
-            print(f"Minimum Distance at Intercept: {self.min_distance_history[self.min_dv_index]:.3f}, {self.min_distance_history[self.min_dv_index].to(u.km):.0f}")
-            print(f"Time of Minimum Distance: {self.time_of_min_distance_history[self.min_dv_index].to(u.day):.2f} after ISO Perihelion")
+            print(f"Optimal Chemical Delta-V Vector Required at Burn: {self.dv_history_array[below_v_threshold_index][min_rel_velocity_index]} km/s")
+            print(f"Optimal Chemical Delta-V Magnitude Required at Burn: {delta_v_min_rel_velocity:.3f} km/s")
+            print(f"Minimum Relative Velocity at Intercept: {min_rel_velocity:.6f} km/s")
+            print(f"Time of Minimum Distance: {time_min_rel_velocity.to(u.day):.2f} after ISO Perihelion")
         
-        self.sim_params['dv_chemical_vector'] = self.dv_history[self.min_dv_index] * u.km / u.s
+        self.sim_params['dv_chemical_vector'] = self.dv_history_array[below_v_threshold_index][min_rel_velocity_index]
         
         self.intercept_trajectory(verbose=False)
 
@@ -676,18 +697,6 @@ class InterceptorMission:
         else:
             anim1 = None
             anim2 = None
-        
-        self.scanner_times_array = np.array(self.scanner_times) * u.s
-        
-        self.sc_intercept_ts_history_array = np.array([val.to(u.s).value for val in self.sc_intercept_ts_history]) * u.s
-        self.sc_intercept_rs_history_array = np.array(self.sc_intercept_rs_history) * u.au
-        self.sc_intercept_vs_history_array = np.array(self.sc_intercept_vs_history) * u.km / u.s
-        self.dv_history_array = np.array(self.dv_history) * u.km / u.s
-
-        self.min_distance_index_history_array = np.array(self.min_distance_index_history)
-        self.time_of_min_distance_history_array = np.array([val.to(u.s).value for val in self.time_of_min_distance_history]) * u.s
-        self.min_distance_history_array = np.array([val.to(u.km).value for val in self.min_distance_history]) * u.km
-        self.rel_v_of_min_distance_history_array = np.array([val.to(u.km / u.s).value for val in self.rel_v_of_min_distance_history]) * u.km / u.s
 
         return anim1, anim2
 

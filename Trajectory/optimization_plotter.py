@@ -30,6 +30,9 @@ mission = Funcs.InterceptorMission(iso_elements=Funcs.characteristic_heliocentri
 
 result, anim1, anim2 = mission.solve_intercept_optimization()
 
+anim1.save('./Trajectory/optimization_trajectory_example.mp4', writer='ffmpeg', fps=15)
+anim2.save('./Trajectory/optimization_history.mp4', writer='ffmpeg', fps=5)
+
 print('Optimization Result:')
 print(mission.sim_params['dv_chemical_vector'])
 

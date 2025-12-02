@@ -15,8 +15,8 @@ sc_elements = {
 }
 
 sim_params = {
-    't_burn': 40 * u.day,   # Burn executed at 700 days before perihelion
-    'nu_burn': 0 * u.deg, # S/C at aphelion/perihelion etc
+    't_burn': -1000 * u.day,   # Burn executed at 700 days before perihelion
+    'nu_burn': 180 * u.deg, # S/C at aphelion/perihelion etc
     'max_flight_time': 1000 * u.day,
     'max_distance': 20 * u.au,
     'a_electric': 0 * u.mm / u.s**2,  # mm/s^2 (Low thrust)
@@ -34,10 +34,10 @@ mission = Funcs.InterceptorMission(iso_elements=Funcs.characteristic_heliocentri
 # mission.intercept_trajectory()
 # anim = mission.plot_trajectory()
 
-anim1, anim2 = mission.solve_intercept_lambert_scanner(animate=True)
+anim1, anim2 = mission.solve_intercept_lambert_scanner(animate=True, steps=1)
 
-# anim1.save('lambert_scanner_trajectory_example.mp4', writer='ffmpeg', fps=60)
-# anim2.save('lambert_scanner_history.mp4', writer='ffmpeg', fps=60)
+anim1.save('./Trajectory/lambert_scanner_trajectory_example.mp4', writer='ffmpeg', fps=15)
+anim2.save('./Trajectory/lambert_scanner_history.mp4', writer='ffmpeg', fps=60)
 
 # fig = plt.figure(figsize=(10, 8))
 # fig.subplots_adjust(hspace=0.4, wspace=0.4)
